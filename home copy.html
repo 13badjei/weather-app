@@ -163,14 +163,9 @@
         <div class="info">
             <h2 class="location">
                 <i class="map"><img src="https://img.icons8.com/plasticine/35/000000/worldwide-location.png"/></i></h2>
-                <form role="search" id="form">
-                    <input type="search" id="query" name="q"
-                     placeholder="Search..."
-                     aria-label="Search through site content">
-                    <button>
-                      <svg viewBox="0 0 1024 1024"><path class="path1" d="M848.471 928l-263.059-263.059c-48.941 36.706-110.118 55.059-177.412 55.059-171.294 0-312-140.706-312-312s140.706-312 312-312c171.294 0 312 140.706 312 312 0 67.294-24.471 128.471-55.059 177.412l263.059 263.059-79.529 79.529zM189.623 408.078c0 121.364 97.091 218.455 218.455 218.455s218.455-97.091 218.455-218.455c0-121.364-103.159-218.455-218.455-218.455-121.364 0-218.455 97.091-218.455 218.455z"></path></svg>
-                    </button>
-                  </form>
+                <input id="mySearchField" name="search" placeholder="Search.." type="text">
+                <button id="mySearchButton">Search</button>
+                <div id="myContentArea></div>
             <p id="date">SAT | FEB 13 | 11:30AM</p>
             <h1 class="temp">{%tempval%}&deg;C</h1>
             <h3 class= "tempmin_max"> {%tempmin%}&deg;C | Max {%tempmax%}&deg;C</h3>
@@ -192,19 +187,23 @@
             weathercon.innerHTML = "<i class = 'rain'> <img src='https://img.icons8.com/doodle/48/000000/rain--v1.png'/></i>";
         } 
 
-        const f = document.getElementById('form');
-        const q = document.getElementById('query');
-        const api = "https://openweathermap.org/api"
-        const location = 'London';
+        $(function() {
+        var _myContentArea = document.getElementById("myContentArea");
+        var _mySearchButton = document.getElementById("mySearchButton");
+        _mySearchButton.onclick = getData;
 
-        function submitted(event) {
-            event.preventDefault();
-            const url = api + location + '+' + q.value;
-            const win = window.open(url, '_blank');
-            win.focus();
-        }
-
-        f.addEventListener('submit', submitted)
+        function getData(){
+        var _mySearchField = document.getElementById("mySearchField");
+            $.ajax({
+            url: "https://openweathermap.org/api"+_mySearchField.value,
+           method: "GET",
+            dataType: "json",
+            success: function(data) {
+                var str = "";          
+               for(var i= 0; i < data.length; i++){
+                 str +='Job Title : '+data[i].description+' <br> Wearher: '+data.jobsBreakdown[i].value+' <br> Percentage of Occupancies in Area : '+data.jobsBreakdown[i].percentage.toPrecision(2)+'% <br><br>';
+               }
+              _myContentArea.innerHTML = str;
 
         const getCurrentDay= () => {
             var weekday = new Array(7);
@@ -254,8 +253,8 @@
 
             return `${month} ${date} | ${hours}:${mins}${period}`; 
         };
-
         curDate.innnerHTML = getCurrentDay() + " | " + getCurrentTime();
+    }
     </script>
 </body>
 </html>
